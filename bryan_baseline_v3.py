@@ -15,11 +15,11 @@ import numpy as np
 
 
 def get_user_feature():
-    if os.path.exists('../data/userFeature.csv'):
-        user_feature=pd.read_csv('../data/userFeature.csv')
+    if os.path.exists('./data/userFeature.csv'):
+        user_feature=pd.read_csv('./data/userFeature.csv')
     else:
         userFeature_data = []
-        with open('../data/userFeature.data', 'r') as f:
+        with open('./data/userFeature.data', 'r') as f:
             cnt = 0
             for i, line in enumerate(f):
                 line = line.strip().split('|')
@@ -32,25 +32,25 @@ def get_user_feature():
                     print(i)
                 if i % 1000000 == 0:
                     user_feature = pd.DataFrame(userFeature_data)
-                    user_feature.to_csv('../data/userFeature_' + str(cnt) + '.csv', index=False)
+                    user_feature.to_csv('./data/userFeature_' + str(cnt) + '.csv', index=False)
                     cnt += 1
                     del userFeature_data, user_feature
                     userFeature_data = []
             user_feature = pd.DataFrame(userFeature_data)
-            user_feature.to_csv('../data/userFeature_' + str(cnt) + '.csv', index=False)
+            user_feature.to_csv('./data/userFeature_' + str(cnt) + '.csv', index=False)
             del userFeature_data, user_feature
             user_feature = pd.concat(
-                [pd.read_csv('../data/userFeature_' + str(i) + '.csv') for i in range(cnt + 1)]).reset_index(drop=True)
-            user_feature.to_csv('../data/userFeature.csv', index=False)
+                [pd.read_csv('./data/userFeature_' + str(i) + '.csv') for i in range(cnt + 1)]).reset_index(drop=True)
+            user_feature.to_csv('./data/userFeature.csv', index=False)
     return user_feature
 
 def get_data():
-    if os.path.exists('../data/data.csv'):
-        return pd.read_csv('../data/data.csv')
+    if os.path.exists('./data/data.csv'):
+        return pd.read_csv('./data/data.csv')
     else:
-        ad_feature = pd.read_csv('../data/adFeature.csv')
-        train=pd.read_csv('../data/train.csv')
-        predict=pd.read_csv('../data/test1.csv')
+        ad_feature = pd.read_csv('./data/adFeature.csv')
+        train=pd.read_csv('./data/train.csv')
+        predict=pd.read_csv('./data/test1.csv')
         train.loc[train['label']==-1,'label']=0
         predict['label']=-1
         user_feature=get_user_feature()
@@ -122,7 +122,7 @@ data=get_data()
 train=data[data['label']!=-1]
 test=data[data['label']==-1]
 del data
-predict=pd.read_csv('../data/test1.csv')
+predict=pd.read_csv('./data/test1.csv')
 cnt=20
 size = math.ceil(len(train) / cnt)
 result=[]
@@ -137,5 +137,5 @@ result=pd.concat(result,axis=1)
 result['score']=np.mean(result,axis=1)
 result=result.reset_index(drop=True)
 result=pd.concat([predict[['aid','uid']].reset_index(drop=True),result['score']],axis=1)
-result[['aid','uid','score']].to_csv('../data/submission.csv', index=False)
-os.system('zip ../data/baseline.zip ../data/submission.csv')
+result[['aid','uid','score']].to_csv('./data/submission.csv', index=False)
+os.system('zip ./data/baseline.zip ./data/submission.csv')

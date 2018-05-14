@@ -10,12 +10,12 @@ from sklearn.preprocessing import OneHotEncoder,LabelEncoder
 from scipy import sparse
 import os
 
-ad_feature=pd.read_csv('../data/adFeature.csv')
-if os.path.exists('../data/userFeature.csv'):
-    user_feature=pd.read_csv('../data/userFeature.csv')
+ad_feature=pd.read_csv('./data/adFeature.csv')
+if os.path.exists('./data/userFeature.csv'):
+    user_feature=pd.read_csv('./data/userFeature.csv')
 else:
     userFeature_data = []
-    with open('../data/userFeature.data', 'r') as f:
+    with open('./data/userFeature.data', 'r') as f:
         for i, line in enumerate(f):
             line = line.strip().split('|')
             userFeature_dict = {}
@@ -26,10 +26,10 @@ else:
             if i % 100000 == 0:
                 print(i)
         user_feature = pd.DataFrame(userFeature_data)
-        user_feature.to_csv('../data/userFeature.csv', index=False)
+        user_feature.to_csv('./data/userFeature.csv', index=False)
         del userFeature_data
-train=pd.read_csv('../data/train.csv')
-predict=pd.read_csv('../data/test1.csv')
+train=pd.read_csv('./data/train.csv')
+predict=pd.read_csv('./data/test1.csv')
 train.loc[train['label']==-1,'label']=0
 predict['label']=-1
 data=pd.concat([train,predict])
@@ -95,8 +95,8 @@ def LGB_predict(train_x,train_y,test_x,res):
     clf.fit(train_x, train_y, eval_set=[(train_x, train_y)], eval_metric='auc',early_stopping_rounds=100)
     res['score'] = clf.predict_proba(test_x)[:,1]
     res['score'] = res['score'].apply(lambda x: float('%.6f' % x))
-    res.to_csv('../data/submission.csv', index=False)
-    os.system('zip ../data/baseline.zip ../data/submission.csv')
+    res.to_csv('./data/submission.csv', index=False)
+    os.system('zip ./data/baseline.zip ./data/submission.csv')
     return clf
 
 model=LGB_predict(train_x,train_y,test_x,res)
